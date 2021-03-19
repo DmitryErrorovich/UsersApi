@@ -3,6 +3,15 @@ import mongoose from 'mongoose';
 import Users from '../models/users';
 import https from 'https'
 
+const putUsers = async(req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body)
+  Users.findOneAndUpdate({_id: req.body.user._id}, req.body.user).exec((err, user) => {
+    console.log({user, err})
+    if(err) return res.status(500).json({err: err.message});
+    res.json({user, message: 'Successfully updated'})
+  });
+};
+
 const createUsers = async() => {
   let output;
   const req = await https.get("https://randomuser.me/api/?results=4800", (res) => {
@@ -47,7 +56,7 @@ const createUsers = async() => {
 
 const getAllUsers = async(req: Request, res: Response, next: NextFunction) => {
   console.log(req)
-  const {query: {results, page}}: any = req
+  const {query: {results=10, page =1}}: any = req
   // await createUsers(+query)
   try {
     const users = await Users.find().limit(+results * 1).skip((page - 1) * results).exec()
@@ -67,4 +76,21 @@ const getAllUsers = async(req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { getAllUsers };
+const getUser = async(req: Request, res: Response, next: NextFunction) => {
+  console.log(req)
+  // await createUsers(+query)
+  try {
+    await Users.find({_id: req.query.id}).exec((err, user) => {
+      // console.log({user, err})
+      if(err) return res.status(500).json({err: err.message});
+      res.json({user:user ? user[0] : [], message: 'Successfully updated'})
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      error
+    });
+  }
+};
+
+export default { getAllUsers, putUsers, getUser };
