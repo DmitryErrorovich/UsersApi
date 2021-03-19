@@ -12,6 +12,7 @@ export default interface IUsers extends Document {
     city: string,
     state: string,
     postcode: string,
+    country: string;
     coordinates: {
       latitude: string,
       longitude: string

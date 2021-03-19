@@ -1,61 +1,57 @@
 import { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
 import Users from '../models/users';
-import https from 'https'
 
 const putUsers = async(req: Request, res: Response, next: NextFunction) => {
-  console.log(req.body)
-  Users.findOneAndUpdate({_id: req.body.user._id}, req.body.user).exec((err, user) => {
-    console.log({user, err})
+  await Users.findOneAndUpdate({_id: req.body.user._id}, req.body.user, {new: true,returnOriginal: false}).exec((err, user) => {
     if(err) return res.status(500).json({err: err.message});
     res.json({user, message: 'Successfully updated'})
   });
 };
 
-const createUsers = async() => {
-  let output;
-  const req = await https.get("https://randomuser.me/api/?results=4800", (res) => {
-    console.log(` ${res.statusCode}`);
-    res.setEncoding('utf8');
+// TODO: REMOVE WHEN NO NEED TO PARSE
+// const createUsers = async() => {
+//   let output;
+//   const req = await https.get("https://randomuser.me/api/?results=4800", (res) => {
+//     console.log(` ${res.statusCode}`);
+//     res.setEncoding('utf8');
 
-    res.on('data', (chunk) => {
-      // console.log(chunk)
-      output += chunk;
-    });
+//     res.on('data', (chunk) => {
+//       // console.log(chunk)
+//       output += chunk;
+//     });
 
-    res.on('end', () => {
-      // console.log({output})
-      let obj = JSON.parse(output.replace("undefined", ""));
-      // console.log({obj})
-      // for(let i = 0; i <= obj.results.length -1; i ++) {
-        Users.insertMany(obj.results)
+//     res.on('end', () => {
+//       // console.log({output})
+//       let obj = JSON.parse(output.replace("undefined", ""));
+//       // console.log({obj})
+//       // for(let i = 0; i <= obj.results.length -1; i ++) {
+//         Users.insertMany(obj.results)
 
-      // us.save()
-      // }
+//       // us.save()
+//       // }
 
-          // .then((result) => {
-          //     return {
-          //         users: result
-          //     };
-          // })
-          // .catch((error) => {
-          //     return {
-          //         message: error.message,
-          //         error
-          //     };
-          // });
+//           // .then((result) => {
+//           //     return {
+//           //         users: result
+//           //     };
+//           // })
+//           // .catch((error) => {
+//           //     return {
+//           //         message: error.message,
+//           //         error
+//           //     };
+//           // });
 
-    });
-  })
-  req.on('error', (err) => {
-    // res.send('error: ' + err.message);
-  });
+//     });
+//   })
+//   req.on('error', (err) => {
+//     // res.send('error: ' + err.message);
+//   });
 
-  await req.end();
-};
+//   await req.end();
+// };
 
 const getAllUsers = async(req: Request, res: Response, next: NextFunction) => {
-  console.log(req)
   const {query: {results=10, page =1}}: any = req
   // await createUsers(+query)
   try {
@@ -77,20 +73,10 @@ const getAllUsers = async(req: Request, res: Response, next: NextFunction) => {
 };
 
 const getUser = async(req: Request, res: Response, next: NextFunction) => {
-  console.log(req)
-  // await createUsers(+query)
-  try {
     await Users.find({_id: req.query.id}).exec((err, user) => {
-      // console.log({user, err})
       if(err) return res.status(500).json({err: err.message});
       res.json({user:user ? user[0] : [], message: 'Successfully updated'})
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-      error
-    });
-  }
 };
 
 export default { getAllUsers, putUsers, getUser };

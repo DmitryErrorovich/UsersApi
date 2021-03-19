@@ -18,6 +18,7 @@ const UsersSchema: Schema = new Schema(
         city: String,
         state: String,
         postcode: String,
+        country: String,
         coordinates: {
           latitude: String,
           longitude: String
