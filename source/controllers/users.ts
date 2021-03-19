@@ -1,10 +1,13 @@
-import { NextFunction, Request, Response } from 'express';
-import Users from '../models/users';
+import { NextFunction, Request, Response } from "express";
+import Users from "../models/users";
 
-const putUsers = async(req: Request, res: Response, next: NextFunction) => {
-  await Users.findOneAndUpdate({_id: req.body.user._id}, req.body.user, {new: true,returnOriginal: false}).exec((err, user) => {
-    if(err) return res.status(500).json({err: err.message});
-    res.json({user, message: 'Successfully updated'})
+const putUsers = async (req: Request, res: Response, next: NextFunction) => {
+  await Users.findOneAndUpdate({ _id: req.body.user._id }, req.body.user, {
+    new: true,
+    returnOriginal: false,
+  }).exec((err, user) => {
+    if (err) return res.status(500).json({ err: err.message });
+    res.json({ user, message: "Successfully updated" });
   });
 };
 
@@ -51,32 +54,37 @@ const putUsers = async(req: Request, res: Response, next: NextFunction) => {
 //   await req.end();
 // };
 
-const getAllUsers = async(req: Request, res: Response, next: NextFunction) => {
-  const {query: {results=10, page =1}}: any = req
+const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+  const {
+    query: { results = 10, page = 1 },
+  }: any = req;
   // await createUsers(+query)
   try {
-    const users = await Users.find().limit(+results * 1).skip((page - 1) * results).exec()
+    const users = await Users.find()
+      .limit(+results * 1)
+      .skip((page - 1) * results)
+      .exec();
     const count = await Users.countDocuments();
-        // .then((users) => {
-            return res.status(200).json({
-                users: users,
-                count: users.length,
-                totalPages: Math.ceil(count / results),
-                currentPage: page
-            });
+    // .then((users) => {
+    return res.status(200).json({
+      users: users,
+      count: users.length,
+      totalPages: Math.ceil(count / results),
+      currentPage: page,
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message,
-      error
-  });
+      error,
+    });
   }
 };
 
-const getUser = async(req: Request, res: Response, next: NextFunction) => {
-    await Users.find({_id: req.query.id}).exec((err, user) => {
-      if(err) return res.status(500).json({err: err.message});
-      res.json({user:user ? user[0] : [], message: 'Successfully updated'})
-    });
+const getUser = async (req: Request, res: Response, next: NextFunction) => {
+  await Users.find({ _id: req.query.id }).exec((err, user) => {
+    if (err) return res.status(500).json({ err: err.message });
+    res.json({ user: user ? user[0] : [], message: "Successfully updated" });
+  });
 };
 
 export default { getAllUsers, putUsers, getUser };
