@@ -3,9 +3,9 @@ import { Document } from "mongoose";
 export default interface IUsers extends Document {
   gender: string;
   name: {
-    title: string;
-    first: string;
-    last: string;
+    title?: string;
+    first?: string;
+    last?: string;
   };
   location: {
     street: string;

@@ -56,16 +56,16 @@ const putUsers = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   const {
-    query: { results = 10, page = 1 },
+    query: { results = 10, page = 1, searchValue = "" },
   }: any = req;
-  // await createUsers(+query)
+  console.log({searchValue})
   try {
-    const users = await Users.find()
+    
+    const users = await Users.find({"name.first": {$regex: RegExp(searchValue, "i")}})
       .limit(+results * 1)
       .skip((page - 1) * results)
       .exec();
-    const count = await Users.countDocuments();
-    // .then((users) => {
+    const count = await Users.find({"name.first": {$regex: RegExp(searchValue, "i")}}).countDocuments();
     return res.status(200).json({
       users: users,
       count: users.length,
