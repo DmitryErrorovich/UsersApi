@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Users from "../models/users";
+import { allowCors } from "./loginUsers";
 
 const putUsers = async (req: Request, res: Response, next: NextFunction) => {
   await Users.findOneAndUpdate({ _id: req.body.user._id }, req.body.user, {
@@ -87,4 +88,4 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
-export default { getAllUsers, putUsers, getUser };
+export default { getAllUsers: allowCors(getAllUsers), putUsers: allowCors(putUsers), getUser: allowCors(getUser) };
