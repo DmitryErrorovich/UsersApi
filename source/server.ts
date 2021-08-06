@@ -5,6 +5,7 @@ import logging from "./config/logging";
 import config from "./config/config";
 import bookRoutes from "./routes/book";
 import usersRoutes from "./routes/users";
+import authRoutes from './routes/loginUsers';
 import mongoose from "mongoose";
 
 const NAMESPACE = "Server";
@@ -62,6 +63,7 @@ router.use((req, res, next) => {
 /** Routes go here */
 router.use("/api/books", bookRoutes);
 router.use("/api/users", usersRoutes);
+router.use("/api", authRoutes);
 
 /** Error handling */
 router.use((req, res, next) => {

@@ -28,6 +28,7 @@ const MONGO = {
 
 const SERVER_HOSTNAME = process.env.SERVER_HOSTNAME || "localhost";
 const SERVER_PORT = process.env.SERVER_PORT || 1337;
+const JWT_SECRET = process.env.TOKEN_SECRET
 
 const SERVER = {
   hostname: SERVER_HOSTNAME,
@@ -37,6 +38,7 @@ const SERVER = {
 const config = {
   mongo: MONGO,
   server: SERVER,
+  jwt:JWT_SECRET
 };
 
 export default config;
