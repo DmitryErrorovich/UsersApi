@@ -58,7 +58,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   //token
   const token = jwt.sign({ _id: user._id }, config.jwt);
 
-  res.header("auth-token", token).send(token);
+  res.header("auth-token", token).send({token});
 };
 
 export const allowCors = fn => async (req, res) => {

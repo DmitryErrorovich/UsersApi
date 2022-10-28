@@ -62,7 +62,12 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   console.log({searchValue})
   try {
     
-    const users = await Users.find({"name.first": {$regex: RegExp(searchValue, "i")}})
+    const users = await Users.find({
+      $or: [
+        {"name.first": {$regex: RegExp(searchValue, "i")}},
+        {"name.last": {$regex: RegExp(searchValue, "i")}}
+      ]
+    })
       .limit(+results * 1)
       .skip((page - 1) * results)
       .exec();
